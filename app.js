@@ -24,6 +24,24 @@ app.get("/createblog", (req, res) => {
   res.render("blog");
 });
 
+app.get("/blog/:id", async (req, res) => {
+  const id = req.params.id;
+  const blog = await Blog.findById(id);
+  res.render("singleBlog", { blog });
+});
+
+app.get("/deleteblog/:id", async (req, res) => {
+  const id = req.params.id;
+  await Blog.findByIdAndDelete(id);
+  res.redirect("/");
+});
+
+app.get("/editblog/:id", async (req, res) => {
+  const id = req.params.id;
+  const blog = await Blog.findById(id);
+  res.render("editblog", { blog });
+});
+
 app.post("/createblog", upload.single("image"), async (req, res) => {
   //image is the name of input image in index.ejs
   console.log(req.body);
