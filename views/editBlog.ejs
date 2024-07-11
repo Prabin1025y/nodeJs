@@ -118,7 +118,7 @@
 
     <div class="container">
       <h1>Edit Your Blog Post</h1>
-      <form class="blog-form" id="blogForm" action="/createblog" method="post" enctype="multipart/form-data">
+      <form class="blog-form" id="blogForm" action="/editblog/<%- blog._id %>" method="post" enctype="multipart/form-data">
         <div class="form-group">
           <label for="title">Title</label>
           <input type="text" value="<%- blog.title %>" id="title" name="title" required />
@@ -133,7 +133,7 @@
         </div>
         <div class="form-group">
           <label for="image">Image</label>
-          <input type="file" id="image" name="image" accept="image/*" required />
+          <input type="file" id="image" name="image" accept="image/*" />
         </div>
         <button type="submit">Save</button>
       </form>

@@ -16,6 +16,7 @@
         background-color: #333;
         overflow: hidden;
         padding: 20px 0;
+        position: relative;
       }
 
       .navbar a {
@@ -55,6 +56,14 @@
         font-size: 18px;
         margin-top: 10px;
       }
+
+      .createBlogButton {
+        border: 1px solid white;
+        border-radius: 10px;
+        position: absolute;
+        right: 100px;
+        transition: all 0.2s ease-in;
+      }
     </style>
   </head>
 
@@ -65,19 +74,15 @@
       <a href="#">About</a>
       <a href="#">Services</a>
       <a href="#">Contact</a>
+      <a href="/register">register</a>
+      <a href="/login">login</a>
+      <a href="/createblog" class="createBlogButton">Create New Blog</a>
     </div>
 
-    <div style="display: flex">
-      <!-- Cards Section -->
-      <!-- <div class="card" >
-        <img src="1720493316668a-sleek-and-modern-dark-themed-portfolio-website-b-mkfmxKzOTwSheZTxluy00w-gYbVb6r-Rrq6EVnqgqJlHA.jpeg" alt="Card Image">
-        <h2 class="title">Card 1 Title</h2>
-        <h3>subtitle</h3>
-        <h4>description</h4>
-      </div> -->
+    <div style="display: flex; flex-wrap: wrap;">
       <% blogs.forEach((blog)=>{ %>
       <div class="card">
-        <img src="<%- blog.image %>" alt="Card Image" />
+        <img src="<%- blog.image %>" alt="Card Image" width="300px" height="400px" />
         <h2 class="title"><%- blog.title %></h2>
         <a href="/blog/<%- blog._id %>"> <button>See More</button></a>
       </div>

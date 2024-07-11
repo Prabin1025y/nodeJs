@@ -1,7 +1,10 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+
 const connectToDb = require("./database/databaseConnection");
 const Blog = require("./model/blogModel");
 const { multer, storage } = require("./middleware/multerConfig");
+const UserBlog = require("./model/userModel");
 const app = express();
 
 const upload = multer({ storage });
@@ -42,6 +45,51 @@ app.get("/editblog/:id", async (req, res) => {
   res.render("editblog", { blog });
 });
 
+app.get("/register", async (req, res) => {
+  res.render("register");
+});
+
+app.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+
+  await UserBlog.create({
+    username,
+    email,
+    password: bcrypt.hashSync(password, 12),
+  });
+
+  res.redirect("/login");
+});
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+  const user = await UserBlog.findOne({ email: email });
+  if (!user) {
+    res.send("Invalid Email");
+  } else {
+    //check password
+    if (!bcrypt.compareSync(password, user.password)) res.send("Invalid Password");
+    else res.send("Login Successful");
+  }
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.post("/editblog/:id", upload.single("image"), async (req, res) => {
+  const id = req.params.id;
+  const { title, subtitle, description } = req.body;
+  const imageFile = req.file.filename;
+  await Blog.findByIdAndUpdate(id, {
+    title,
+    subtitle,
+    description,
+    image: imageFile,
+  });
+  res.redirect(`/blog/${id}`);
+});
+
 app.post("/createblog", upload.single("image"), async (req, res) => {
   //image is the name of input image in index.ejs
   console.log(req.body);
@@ -55,7 +103,7 @@ app.post("/createblog", upload.single("image"), async (req, res) => {
     image: fileName,
   });
 
-  res.send("Blog created and data inserted successfully");
+  res.redirect("/");
 });
 
 app.listen(3000, () => {
