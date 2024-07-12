@@ -3,23 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Navbar and Cards Example</title>
-    <link rel="stylesheet" href="css/index.css">
+    <title>BlogShare - Create And Share Your Informations</title>
+    <link rel="stylesheet" href="css/index.css" />
   </head>
 
   <body>
     <!-- Navigation Bar -->
     <div class="navbar">
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Contact</a>
-      <a href="/register">register</a>
-      <a href="/login">login</a>
-      <a href="/createblog" class="createBlogButton">Create New Blog</a>
+      <a href="/">Home</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <div class="right">
+        <a><%- username %></a>
+        <a href="/logout">Log out</a>
+        <a href="/register">Register</a>
+        <a href="/createblog" class="create-blog">Create New Blog</a>
+      </div>
+      <form class="search-container" action="/" method="post">
+        <input type="text" placeholder="Search For Blogs" id="searchblog" name="searchblog" />
+        <button type="submit">🔍</button>
+      </form>
     </div>
 
-    <div style="display: flex; flex-wrap: wrap;">
+    <div style="display: flex; flex-wrap: wrap">
       <% blogs.forEach((blog)=>{ %>
       <div class="card">
         <img src="<%- blog.image %>" alt="Card Image" width="300px" height="400px" />

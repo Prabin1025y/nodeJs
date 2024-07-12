@@ -1,11 +1,12 @@
 const jsonwebtoken = require("jsonwebtoken");
-const promisify = require("util").promisify;
+// const promisify = require("util").promisify;
 
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies.token;
   //   console.log(token);
   if (!token || token === null) {
-    return res.send("Please Log In First");
+    // alert("Please Log In First");
+    return res.redirect("/login");
   }
 
   jsonwebtoken.verify(token, process.env.SECRET, (err, result) => {
