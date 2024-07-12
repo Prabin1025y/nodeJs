@@ -24,35 +24,36 @@ app.use(express.static("./storage"));
 app.use(express.static("./public"));
 
 app.set("view engine", "ejs");
-
+let user;
 app.get("/", isAuthenticated, async (req, res) => {
   const blogs = await Blog.find();
   if (blogs.length === 0) res.send("No Datas Found");
-  const user = await UserBlog.findById(req.userId);
-  res.render("index", { blogs: blogs, username : user.username });
+  user = await UserBlog.findById(req.userId);
+  res.render("index", { blogs: blogs, username: user.username, errorMessage:"", errorClass: "error-hidden"});
   // console.log(username);
 });
 
 app.get("/createblog", isAuthenticated, (req, res) => {
-  res.render("blog");
+  res.render("blog", { username: user.username });
 });
 
-app.get("/blog/:id", async (req, res) => {
+app.get("/blog/:id", isAuthenticated, async (req, res) => {
   const id = req.params.id;
+  // const user = await UserBlog.findById(req.userId);
   const blog = await Blog.findById(id);
-  res.render("singleBlog", { blog });
+  res.render("singleBlog", { blog, username: user.username });
 });
 
-app.get("/deleteblog/:id", async (req, res) => {
+app.get("/deleteblog/:id", isAuthenticated, async (req, res) => {
   const id = req.params.id;
   await Blog.findByIdAndDelete(id);
   res.redirect("/");
 });
 
-app.get("/editblog/:id", async (req, res) => {
+app.get("/editblog/:id", isAuthenticated, async (req, res) => {
   const id = req.params.id;
   const blog = await Blog.findById(id);
-  res.render("editBlog", { blog });
+  res.render("editBlog", { blog, username: user.username });
 });
 
 app.get("/register", async (req, res) => {
@@ -60,10 +61,10 @@ app.get("/register", async (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login");
+  res.render("login",{errorMessage:"", errorClass: "error-hidden"});
 });
 
-app.get("/logout", (req, res) => {
+app.get("/logout", isAuthenticated, (req, res) => {
   res.clearCookie("token");
   res.redirect("/login");
 });
@@ -84,10 +85,10 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const user = await UserBlog.findOne({ email: email });
   if (!user) {
-    res.send("Invalid Email");
+    res.render("login", { errorMessage: "Incorrect Email!!", errorClass: "error-shown" });
   } else {
     //check password
-    if (!bcrypt.compareSync(password, user.password)) res.send("Invalid Password");
+    if (!bcrypt.compareSync(password, user.password)) res.render("login", { errorMessage: "Incorrect Password!!", errorClass: "error-shown" });
     else {
       const token = jsonwebtoken.sign({ userId: user._id }, process.env.SECRET, { expiresIn: "10d" });
       res.cookie("token", token);
@@ -95,8 +96,6 @@ app.post("/login", async (req, res) => {
     }
   }
 });
-
-
 
 app.post("/editblog/:id", upload.single("image"), async (req, res) => {
   const id = req.params.id;
@@ -117,7 +116,7 @@ app.post("/editblog/:id", upload.single("image"), async (req, res) => {
   res.redirect(`/blog/${id}`);
 });
 
-app.post("/createblog", upload.single("image"),isAuthenticated, async (req, res) => {
+app.post("/createblog", upload.single("image"), isAuthenticated, async (req, res) => {
   //image is the name of input image in index.ejs
   // console.log(req.body);
   const { title, subtitle, description } = req.body;
@@ -134,8 +133,6 @@ app.post("/createblog", upload.single("image"),isAuthenticated, async (req, res)
     // AuthorId: req.userId
   });
 
-
-
   res.redirect("/");
 });
 
@@ -145,8 +142,8 @@ app.post("/", async (req, res) => {
   const username = await UserBlog.findById(req.userId).username;
   // console.log(username);
   if (searchInput == "") res.redirect("/");
-  else if (filteredBlogs.length === 0) res.send("No Results Found");
-  res.render("index", { blogs: filteredBlogs,  username :  username });
+  else if (filteredBlogs.length === 0) res.render("index", { blogs: filteredBlogs, username: username, errorMessage:"No- Results Found", errorClass: "error-shown" });
+  else res.render("index", { blogs: filteredBlogs, username: username, errorMessage:"", errorClass: "error-hidden" });
 });
 
 app.listen(3000, () => {

@@ -6,11 +6,11 @@ const isAuthenticated = (req, res, next) => {
   //   console.log(token);
   if (!token || token === null) {
     // alert("Please Log In First");
-    return res.redirect("/login");
+    return res.render("login", { errorMessage: "Login First!!", errorClass: "error-shown" });
   }
 
   jsonwebtoken.verify(token, process.env.SECRET, (err, result) => {
-    if (err) res.send("Invalid Token");
+    if (err) res.render("login", { errorMessage: err, errorClass: "error-shown" });
     else {
       req.userId = result.userId;
       next();

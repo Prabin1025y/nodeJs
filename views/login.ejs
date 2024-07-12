@@ -14,7 +14,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #72edf2 10%, #5151e5 100%);
+      background: linear-gradient(135deg, #efda72 10%, #e59451 100%);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -83,8 +83,31 @@
     button:hover {
       background-color: #4040c5;
     }
+
+    .error-message {
+      background-color: rgb(255, 51, 109);
+      width: 200px;
+      padding: 20px;
+      border-radius: 10px;
+      height: fit-content;
+      position: fixed;
+      color: white;
+      z-index: 3;
+      bottom: 20px;
+      right: -100%;
+      font-weight: bold;
+      transition: right 0.3s linear;
+    }
+    .error-hidden {
+      right: -100%;
+    }
+
+    .error-shown {
+      right: 20px;
+    }
   </style>
   <body>
+    <%- include("./components/error.ejs") %>
     <div class="container">
       <div class="form-container">
         <h2>Login</h2>

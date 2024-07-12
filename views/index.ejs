@@ -9,21 +9,8 @@
 
   <body>
     <!-- Navigation Bar -->
-    <div class="navbar">
-      <a href="/">Home</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <div class="right">
-        <a><%- username %></a>
-        <a href="/logout">Log out</a>
-        <a href="/register">Register</a>
-        <a href="/createblog" class="create-blog">Create New Blog</a>
-      </div>
-      <form class="search-container" action="/" method="post">
-        <input type="text" placeholder="Search For Blogs" id="searchblog" name="searchblog" />
-        <button type="submit">🔍</button>
-      </form>
-    </div>
+    <header><%- include("./components/navBar.ejs") %></header>
+    <%- include("./components/error.ejs") %>
 
     <div style="display: flex; flex-wrap: wrap">
       <% blogs.forEach((blog)=>{ %>
