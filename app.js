@@ -1,29 +1,37 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt"); //Used to hash the password to store in databasr "npm i bcrypt"
+const cookieParser = require("cookie-parser"); //Used To parse cookie by node js as this functionality is not built in "npm i cookie-parser"
+
+require("dotenv").config(); //npm i dotenv
+
+const jsonwebtoken = require("jsonwebtoken"); //Used to generate and verify tokens "npm i jsonwebtoken"
 
 const connectToDb = require("./database/databaseConnection");
 const Blog = require("./model/blogModel");
 const { multer, storage } = require("./middleware/multerConfig");
 const UserBlog = require("./model/userModel");
+const isAuthenticated = require("./middleware/isAuthencated");
 const app = express();
 
 const upload = multer({ storage });
 
 connectToDb();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./storage"));
+app.use(express.static("./public"));
 
 app.set("view engine", "ejs");
 
-app.get("/", async (req, res) => {
+app.get("/", isAuthenticated, async (req, res) => {
   const blogs = await Blog.find();
   if (blogs.length === 0) res.send("No Datas Found");
   res.render("index", { blogs: blogs });
 });
 
-app.get("/createblog", (req, res) => {
+app.get("/createblog", isAuthenticated, (req, res) => {
   res.render("blog");
 });
 
@@ -69,7 +77,11 @@ app.post("/login", async (req, res) => {
   } else {
     //check password
     if (!bcrypt.compareSync(password, user.password)) res.send("Invalid Password");
-    else res.send("Login Successful");
+    else {
+      const token = jsonwebtoken.sign({ userId: user._id }, process.env.SECRET, { expiresIn: "10d" });
+      res.cookie("token", token);
+      res.send("Login Successful");
+    }
   }
 });
 
