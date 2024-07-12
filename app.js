@@ -50,7 +50,7 @@ app.get("/deleteblog/:id", async (req, res) => {
 app.get("/editblog/:id", async (req, res) => {
   const id = req.params.id;
   const blog = await Blog.findById(id);
-  res.render("editblog", { blog });
+  res.render("editBlog", { blog });
 });
 
 app.get("/register", async (req, res) => {
